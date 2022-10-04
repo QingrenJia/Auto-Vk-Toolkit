@@ -16,14 +16,34 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\examples\static_meshlets\shaders\cpu_gpu_shared_config.h" />
+    <ClInclude Include="..\..\..\meshoptimizer\extern\cgltf.h" />
+    <ClInclude Include="..\..\..\meshoptimizer\extern\fast_obj.h" />
+    <ClInclude Include="..\..\..\meshoptimizer\extern\sdefl.h" />
+    <ClInclude Include="..\..\..\meshoptimizer\src\meshoptimizer.h" />
     <ClInclude Include="cg_stdafx.hpp" />
     <ClInclude Include="cg_targetver.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\examples\static_meshlets\source\static_meshlets.cpp" />
+    <ClCompile Include="..\..\..\meshoptimizer\src\allocator.cpp" />
+    <ClCompile Include="..\..\..\meshoptimizer\src\clusterizer.cpp" />
+    <ClCompile Include="..\..\..\meshoptimizer\src\indexcodec.cpp" />
+    <ClCompile Include="..\..\..\meshoptimizer\src\indexgenerator.cpp" />
+    <ClCompile Include="..\..\..\meshoptimizer\src\overdrawanalyzer.cpp" />
+    <ClCompile Include="..\..\..\meshoptimizer\src\overdrawoptimizer.cpp" />
+    <ClCompile Include="..\..\..\meshoptimizer\src\simplifier.cpp" />
+    <ClCompile Include="..\..\..\meshoptimizer\src\spatialorder.cpp" />
+    <ClCompile Include="..\..\..\meshoptimizer\src\stripifier.cpp" />
+    <ClCompile Include="..\..\..\meshoptimizer\src\vcacheanalyzer.cpp" />
+    <ClCompile Include="..\..\..\meshoptimizer\src\vcacheoptimizer.cpp" />
+    <ClCompile Include="..\..\..\meshoptimizer\src\vertexcodec.cpp" />
+    <ClCompile Include="..\..\..\meshoptimizer\src\vertexfilter.cpp" />
+    <ClCompile Include="..\..\..\meshoptimizer\src\vfetchanalyzer.cpp" />
+    <ClCompile Include="..\..\..\meshoptimizer\src\vfetchoptimizer.cpp" />
     <ClCompile Include="cg_stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\..\assets\3rd_party\models\terrain_and_debris\surrounding_terrain_textured.dae" />
     <None Include="..\..\..\examples\static_meshlets\shaders\diffuse_shading_fixed_lightsource.frag" />
     <None Include="..\..\..\examples\static_meshlets\shaders\glsl_helpers.glsl" />
     <None Include="..\..\..\examples\static_meshlets\shaders\meshlet.mesh" />

@@ -5,7 +5,7 @@
 class static_meshlets_app : public avk::invokee
 {
 	static constexpr size_t sNumVertices = 64;
-	static constexpr size_t sNumIndices = 378;
+	static constexpr size_t sNumIndices = 378;// 378;
 
 	struct alignas(16) push_constants
 	{
@@ -129,7 +129,8 @@ public: // v== avk::invokee overrides which will be invoked by the framework ==v
 		glm::mat4 globalTransform = glm::translate(glm::vec3(0.f, -0.5f, -3.f)) * glm::scale(glm::vec3(1.f));
 		std::vector<avk::model> loadedModels;
 		// Load a model from file:
-		auto bunny = avk::model_t::load_from_file("assets/stanford_bunny.obj", aiProcess_Triangulate | aiProcess_PreTransformVertices);
+		//auto bunny = avk::model_t::load_from_file("assets/stanford_bunny.obj", aiProcess_JoinIdenticalVertices | aiProcess_Triangulate | aiProcess_PreTransformVertices);
+		auto bunny = avk::model_t::load_from_file("assets/surrounding_terrain_textured.dae", aiProcess_JoinIdenticalVertices | aiProcess_Triangulate | aiProcess_PreTransformVertices);
 
 		loadedModels.push_back(std::move(bunny));
 
@@ -179,7 +180,7 @@ public: // v== avk::invokee overrides which will be invoked by the framework ==v
 				// create selection for the meshlets
 				auto meshletSelection = avk::make_models_and_mesh_indices_selection(curModel, meshIndex);
 
-				auto cpuMeshlets = avk::divide_into_meshlets(meshletSelection);
+				auto cpuMeshlets = avk::divide_into_meshlets(meshletSelection, true, 64, 64 * 3);
 #if !USE_REDIRECTED_GPU_DATA
 				avk::serializer serializer("direct_meshlets-" + meshname + "-" + std::to_string(mpos) + ".cache");
 				auto [gpuMeshlets, _] = avk::convert_for_gpu_usage_cached<avk::meshlet_gpu_data<sNumVertices, sNumIndices>>(serializer, cpuMeshlets);
@@ -259,6 +260,7 @@ public: // v== avk::invokee overrides which will be invoked by the framework ==v
 			avk::fragment_shader("shaders/diffuse_shading_fixed_lightsource.frag"),
 			// Some further settings:
 			avk::cfg::front_face::define_front_faces_to_be_counter_clockwise(),
+			avk::cfg::polygon_drawing::config_for_lines(),
 			avk::cfg::viewport_depth_scissors_config::from_framebuffer(avk::context().main_window()->backbuffer_reference_at_index(0)),
 			// We'll render to the back buffer, which has a color attachment always, and in our case additionally a depth
 			// attachment, which has been configured when creating the window. See main() function!

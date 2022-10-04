@@ -95,6 +95,19 @@ namespace avk
 		std::optional<mesh_index_t> aMeshIndex,
 		uint32_t aMaxVertices, uint32_t aMaxIndices);
 
+
+	/** Divides the given index buffer into meshlets by alogrithm provided by meshoptimizer.
+	 *  @param	tVertices			The vertex buffer.
+	 *  @param	aIndices			The index buffer.
+	 *  @param	aModel				The model these buffers belong to.
+	 *	@param	aMeshIndex			The optional mesh index of the mesh these buffers belong to.
+	 *	@param	aMaxVertices		The maximum number of vertices of a meshlet.
+	 *	@param	aMaxIndices			The maximum number of indices of a meshlet.
+	 */
+	std::vector<meshlet> opt_meshlets_divider(const std::vector<glm::vec3>& tVertices, const std::vector<uint32_t>& aIndices,
+		const avk::model_t& aModel, std::optional<avk::mesh_index_t> aMeshIndex,
+		uint32_t aMaxVertices, uint32_t aMaxIndices);
+
 	/** Divides the given vertex and index buffer into meshlets using the given callback function.
 	 *  @param	aVertices			The vertex buffer.
 	 *  @param	aIndices			The index buffer.
@@ -164,7 +177,7 @@ namespace avk
 	 *	@param	aMaxIndices			The maximum number of indices of a meshlet.
 	 */
 	std::vector<meshlet> divide_into_meshlets(std::vector<std::tuple<avk::model, std::vector<mesh_index_t>>>& aModelsAndMeshletIndices,
-		const bool aCombineSubmeshes = true, const uint32_t aMaxVertices = 64, const uint32_t aMaxIndices = 378);
+		const bool aCombineSubmeshes = true, const uint32_t aMaxVertices = 64, const uint32_t aMaxIndices = 378 /*378*/);
 
 	/** Divides the given models into meshlets using the given callback function.
 	 *  @param	aModelsAndMeshletIndices				All the models and associated meshes that should be divided into meshlets.
@@ -197,7 +210,7 @@ namespace avk
 	 */
 	template <typename F>
 	std::vector<meshlet> divide_into_meshlets(std::vector<std::tuple<avk::model, std::vector<avk::mesh_index_t>>>& aModelsAndMeshletIndices, F aMeshletDivision,
-		const bool aCombineSubmeshes = true, const uint32_t aMaxVertices = 64, const uint32_t aMaxIndices = 378)
+		const bool aCombineSubmeshes = true, const uint32_t aMaxVertices = 64, const uint32_t aMaxIndices = 378 /*378*/)
 	{
 		std::vector<meshlet> meshlets;
 		for (auto& pair : aModelsAndMeshletIndices) {

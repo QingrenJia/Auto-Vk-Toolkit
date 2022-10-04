@@ -31,6 +31,9 @@
     <None Include="..\..\..\assets\3rd_party\models\stanford_bunny\stanford_bunny.obj">
       <Filter>assets</Filter>
     </None>
+    <None Include="..\..\..\assets\3rd_party\models\terrain_and_debris\surrounding_terrain_textured.dae">
+      <Filter>assets</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cg_stdafx.hpp">
@@ -42,11 +45,30 @@
     <ClInclude Include="..\..\..\examples\static_meshlets\shaders\cpu_gpu_shared_config.h">
       <Filter>shared</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\meshoptimizer\src\meshoptimizer.h" />
+    <ClInclude Include="..\..\..\meshoptimizer\extern\cgltf.h" />
+    <ClInclude Include="..\..\..\meshoptimizer\extern\fast_obj.h" />
+    <ClInclude Include="..\..\..\meshoptimizer\extern\sdefl.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cg_stdafx.cpp">
       <Filter>precompiled_headers</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\examples\static_meshlets\source\static_meshlets.cpp" />
+    <ClCompile Include="..\..\..\meshoptimizer\src\allocator.cpp" />
+    <ClCompile Include="..\..\..\meshoptimizer\src\clusterizer.cpp" />
+    <ClCompile Include="..\..\..\meshoptimizer\src\indexcodec.cpp" />
+    <ClCompile Include="..\..\..\meshoptimizer\src\indexgenerator.cpp" />
+    <ClCompile Include="..\..\..\meshoptimizer\src\overdrawanalyzer.cpp" />
+    <ClCompile Include="..\..\..\meshoptimizer\src\overdrawoptimizer.cpp" />
+    <ClCompile Include="..\..\..\meshoptimizer\src\simplifier.cpp" />
+    <ClCompile Include="..\..\..\meshoptimizer\src\spatialorder.cpp" />
+    <ClCompile Include="..\..\..\meshoptimizer\src\stripifier.cpp" />
+    <ClCompile Include="..\..\..\meshoptimizer\src\vcacheanalyzer.cpp" />
+    <ClCompile Include="..\..\..\meshoptimizer\src\vcacheoptimizer.cpp" />
+    <ClCompile Include="..\..\..\meshoptimizer\src\vertexcodec.cpp" />
+    <ClCompile Include="..\..\..\meshoptimizer\src\vertexfilter.cpp" />
+    <ClCompile Include="..\..\..\meshoptimizer\src\vfetchanalyzer.cpp" />
+    <ClCompile Include="..\..\..\meshoptimizer\src\vfetchoptimizer.cpp" />
   </ItemGroup>
 </Project>
