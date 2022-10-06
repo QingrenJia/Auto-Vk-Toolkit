@@ -177,35 +177,52 @@ public: // v== avk::invokee overrides which will be invoked by the framework ==v
 				drawCallData.mNormals = avk::get_normals(selection);
 				drawCallData.mTexCoords = avk::get_2d_texture_coordinates(selection, 0);
 
-				// create selection for the meshlets
-				auto meshletSelection = avk::make_models_and_mesh_indices_selection(curModel, meshIndex);
-
-				auto cpuMeshlets = avk::divide_into_meshlets(meshletSelection, true, 64, 64 * 3);
+				unsigned int primitive_count = 64;
+				size_t lod = 0;
+				do
+				{
+					// primitive count in one meshlet for different lod level
+					primitive_count = primitive_count >> 1;
+					// create selection for the meshlets
+					auto meshletSelection = avk::make_models_and_mesh_indices_selection(curModel, meshIndex);
+					auto cpuMeshlets = avk::divide_into_meshlets(meshletSelection, true, primitive_count, primitive_count * 3);
 #if !USE_REDIRECTED_GPU_DATA
-				avk::serializer serializer("direct_meshlets-" + meshname + "-" + std::to_string(mpos) + ".cache");
-				auto [gpuMeshlets, _] = avk::convert_for_gpu_usage_cached<avk::meshlet_gpu_data<sNumVertices, sNumIndices>>(serializer, cpuMeshlets);
+					avk::serializer serializer("direct_meshlets-" + meshname + "-" + std::to_string(mpos) + ".cache");
+					auto [gpuMeshlets, _] = avk::convert_for_gpu_usage_cached<avk::meshlet_gpu_data<sNumVertices, sNumIndices>>(serializer, cpuMeshlets);
 #else
-				avk::serializer serializer("indirect_meshlets-" + meshname + "-" + std::to_string(mpos) + ".cache");
-				auto [gpuMeshlets, generatedMeshletData] = avk::convert_for_gpu_usage_cached<avk::meshlet_redirected_gpu_data, sNumVertices, sNumIndices>(serializer, cpuMeshlets);
-				drawCallData.mMeshletData = std::move(generatedMeshletData.value());
+					avk::serializer serializer("indirect_meshlets-" + meshname + "-" + std::to_string(mpos) + "-" + std::to_string(lod++) + ".cache");
+					auto [gpuMeshlets, generatedMeshletData] = avk::convert_for_gpu_usage_cached<avk::meshlet_redirected_gpu_data, sNumVertices, sNumIndices>(serializer, cpuMeshlets);
+					
+					if (drawCallData.mMeshletData.empty())
+						drawCallData.mMeshletData = std::move(generatedMeshletData.value());
+					else
+						drawCallData.mMeshletData.insert(drawCallData.mMeshletData.end(),
+							std::move(generatedMeshletData.value()).begin(), 
+							std::move(generatedMeshletData.value()).end());
 #endif
+					serializer.flush();
 
-				serializer.flush();
+					// fill our own meshlets with the loaded/generated data
+					uint32_t base_offset = (meshletsGeometry.empty() ? 0: 
+						(meshletsGeometry.back().mGeometry.mDataOffset + meshletsGeometry.back().mGeometry.mVertexCount + (meshletsGeometry.back().mGeometry.mPrimitiveCount * 3 + 3) / 4));
+					
+					for (size_t mshltidx = 0; mshltidx < gpuMeshlets.size(); ++mshltidx) {
+						auto& genMeshlet = gpuMeshlets[mshltidx];
 
-				// fill our own meshlets with the loaded/generated data
-				for (size_t mshltidx = 0; mshltidx < gpuMeshlets.size(); ++mshltidx) {
-					auto& genMeshlet = gpuMeshlets[mshltidx];
-
-					auto& ml = meshletsGeometry.emplace_back(meshlet{});
+						auto& ml = meshletsGeometry.emplace_back(meshlet{});
 
 #pragma region start to assemble meshlet struct
-					ml.mTransformationMatrix = drawCallData.mModelMatrix;
-					ml.mMaterialIndex = drawCallData.mMaterialIndex;
-					ml.mTexelBufferIndex = static_cast<uint32_t>(texelBufferIndex);
+						ml.mTransformationMatrix = drawCallData.mModelMatrix;
+						ml.mMaterialIndex = drawCallData.mMaterialIndex;
+						ml.mTexelBufferIndex = static_cast<uint32_t>(texelBufferIndex);
 
-					ml.mGeometry = genMeshlet;
+						ml.mGeometry = genMeshlet;
+						ml.mGeometry.mDataOffset += base_offset;
 #pragma endregion 
-				}
+					}
+
+				} while (primitive_count > 16);
+
 			}
 		} // for (size_t i = 0; i < loadedModels.size(); ++i)
 
